@@ -1,5 +1,6 @@
 import sys
 import pygame
+import pyglet
 
 pygame.init()
 
@@ -129,6 +130,8 @@ class GameMenu():
                     for item in self.items:
                         if item.is_mouse_selection(mpos):
                             self.funcs[item.text]()
+                            sound = pyglet.resource.media('Level Selection_02.wav', streaming=False)
+                            sound.play()
                             # I added this line so that the menu stops running and goes into play mode
                             mainloop = False
 

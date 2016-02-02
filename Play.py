@@ -4,6 +4,7 @@ import SpriteStripAnim
 import sys
 import pytmx
 import time
+import pyglet
 
 from pygame.locals import Color
 from pytmx.util_pygame import load_pygame
@@ -115,6 +116,9 @@ class Play():
                 self.playerx -= 5
             if self.movingup == True:
                 self.playery -= 5
+                if self.movingup == True:
+                jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
+                jumpSound.play()
             elif self.movingdown == True:
                 self.playery += 5
 

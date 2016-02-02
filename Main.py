@@ -43,4 +43,3 @@ while mainLoop:
         playScreen.run()
 
 pygame.quit()
-#sys.exit(0)
