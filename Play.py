@@ -117,8 +117,8 @@ class Play():
             if self.movingup == True:
                 self.playery -= 5
                 if self.movingup == True:
-                jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
-                jumpSound.play()
+                    jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
+                    jumpSound.play()
             elif self.movingdown == True:
                 self.playery += 5
 
