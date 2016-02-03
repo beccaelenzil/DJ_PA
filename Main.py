@@ -41,5 +41,4 @@ while mainLoop:
     elif current_state == "PLAY":
         playScreen = Play.Play(screen)
         playScreen.run()
-
 pygame.quit()

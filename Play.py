@@ -12,8 +12,6 @@ from pytmx.util_pygame import load_pygame
 class Play():
     def __init__(self, screen):
 
-        #pygame.init()
-
         self.screen = screen
 
         self.black = Color('Black')
@@ -29,6 +27,7 @@ class Play():
         self.movingdown = False
         self.jumping = False
         self.playervelocity = 100
+        self.mainLoop = True
 
         self.playerx = 320
         self.playery = 240
@@ -39,6 +38,7 @@ class Play():
         self.idleimage = self.playerspritesheet.image_at((5, 84, 15, 32), colorkey=(129, 129, 129))
         self.gunimage = self.playerspritesheet.image_at((77, 92, 24, 9), colorkey=(129, 129, 129))
         self.armimage = self.playerspritesheet.image_at((57, 98, 12, 5), colorkey=(129, 129, 129))
+        self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
 
@@ -62,13 +62,12 @@ class Play():
 
 
     def run(self):
-        mainLoop = True
-        while mainLoop:
+        while self.mainLoop:
 
             self.clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    mainLoop = False
+                    self.mainLoop = False
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                         self.movingleft = False
@@ -85,9 +84,11 @@ class Play():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                         if self.facingright == True:
+                            # Flip the image since the player is moving right.
                             self.idleimage = pygame.transform.flip(self.idleimage, True, False)
                             self.gunimage = pygame.transform.flip(self.gunimage, True, False)
                             self.armimage = pygame.transform.flip(self.armimage, True, False)
+                            self.jumpingImage = pygame.transform.flip(self.jumpingImage, True, False)
                             self.facingright = False
                             self.movingright = False
                             self.movingleft = True
@@ -95,9 +96,12 @@ class Play():
                             self.movingleft = True
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         if self.facingright == False:
+                            # Flip the image since the player is facing left.
                             self.idleimage = pygame.transform.flip(self.idleimage, True, False)
                             self.gunimage = pygame.transform.flip(self.gunimage, True, False)
                             self.armimage = pygame.transform.flip(self.armimage, True, False)
+                            self.jumpingImage = pygame.transform.flip(self.jumpingImage, True, False)
+
                             self.facingright = True
                             self.movingleft = False
                             self.movingright = True
@@ -127,10 +131,14 @@ class Play():
 
             self.calculate_gravity()
 
-            self.screen.blit(self.idleimage, (self.playerx, self.playery))
+            if self.movingup == False:
+                self.screen.blit(self.idleimage, (self.playerx, self.playery))
+            else:
+                self.screen.blit(self.jumpingImage, (self.playerx, self.playery))
 
             if self.facingright == True:
-                self.screen.blit(self.armimage, (self.playerx + 8, self.playery + 15))
+                self.screen.blit(self.armimage, (self.playerx + 10, self.playery + 15))
+                self.screen.blit(self.gunimage, (self.playerx + 13, self.playery + 10))
             else:
                 self.screen.blit(self.armimage, (self.playerx - 4, self.playery + 15))
 
@@ -140,6 +148,3 @@ class Play():
         #one issue I found was the indentation level of this pygame.quit() - Becca 1/27
         #indenting fixed the quit issue, but introduces other issues
     pygame.quit()
-
-if __name__ == "__main__":
-    pygame.init()
