@@ -141,6 +141,7 @@ class Play():
                 self.screen.blit(self.gunimage, (self.playerx + 13, self.playery + 10))
             else:
                 self.screen.blit(self.armimage, (self.playerx - 4, self.playery + 15))
+                self.screen.blit(self.gunimage, (self.playerx - 18, self.playery + 10))
 
             # Update the screen's rendering
             pygame.display.flip()
