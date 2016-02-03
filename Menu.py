@@ -49,6 +49,8 @@ class GameMenu():
         self.bg_color = bg_color
         self.clock = pygame.time.Clock()
 
+        self.selectSound = pyglet.resource.media('Select.wav', streaming=False)
+
         self.funcs = funcs
         self.items = []
         for index, item in enumerate(items):
@@ -130,8 +132,7 @@ class GameMenu():
                     for item in self.items:
                         if item.is_mouse_selection(mpos):
                             self.funcs[item.text]()
-                            sound = pyglet.resource.media('Level Selection_02.wav', streaming=False)
-                            sound.play()
+                            self.selectSound.play()
                             # I added this line so that the menu stops running and goes into play mode
                             mainloop = False
 
@@ -158,23 +159,3 @@ class GameMenu():
         #one issue I found was the indentation level of this pygame.quit() - Becca 1/27
         #indenting fixed the quit issue, but introduces other issues
     pygame.quit()
-
-if __name__ == "__main__":
-    def hello_world():
-        level_select_sound = pygame.mixer.Sound("Level Selection_02.wav")
-        level_select_sound.play()
-
-    def exit():
-        pygame.quit()
-        sys.exit()
-
-    # Creating the screen
-    screen = pygame.display.set_mode((640, 480), 0, 32)
-
-    menu_items = ('Start', 'Quit')
-    funcs = {'Start': hello_world,
-             'Quit': exit}
-
-    pygame.display.set_caption('Game Menu')
-    gm = GameMenu(screen, funcs.keys(), funcs)
-    gm.run()

@@ -40,6 +40,8 @@ class Play():
         self.gunimage = self.playerspritesheet.image_at((77, 92, 24, 9), colorkey=(129, 129, 129))
         self.armimage = self.playerspritesheet.image_at((57, 98, 12, 5), colorkey=(129, 129, 129))
 
+        self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
+
         # All the screen stuff
         pygame.display.set_caption("Play State")
 
@@ -108,6 +110,7 @@ class Play():
                     if event.key == pygame.K_w or event.key == pygame.K_UP:
                         self.movingup = True
                         self.movingdown = False
+                        self.jumpSound.play()
                     if event.key == pygame.K_SPACE:
                         self.jumping = True
             if self.movingright == True:
@@ -116,9 +119,6 @@ class Play():
                 self.playerx -= 5
             if self.movingup == True:
                 self.playery -= 5
-                if self.movingup == True:
-                    jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
-                    jumpSound.play()
             elif self.movingdown == True:
                 self.playery += 5
 
@@ -132,7 +132,7 @@ class Play():
             if self.facingright == True:
                 self.screen.blit(self.armimage, (self.playerx + 8, self.playery + 15))
             else:
-                self.screen.blit(self.armimage, (self.playerx - 15, self.playery + 10))
+                self.screen.blit(self.armimage, (self.playerx - 4, self.playery + 15))
 
             # Update the screen's rendering
             pygame.display.flip()
