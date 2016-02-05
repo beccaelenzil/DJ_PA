@@ -1,6 +1,6 @@
 import pygame
 import spritesheet
-import SpriteStripAnim
+from SpriteStripAnim import SpriteStripAnim
 import sys
 import pytmx
 import time
@@ -13,6 +13,7 @@ class Play():
     def __init__(self, screen):
 
         self.screen = screen
+
 
         self.black = Color('Black')
 
@@ -39,6 +40,11 @@ class Play():
         self.gunimage = self.playerspritesheet.image_at((77, 92, 24, 9), colorkey=(129, 129, 129))
         self.armimage = self.playerspritesheet.image_at((57, 98, 12, 5), colorkey=(129, 129, 129))
         self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
+
+        self.walkFrames = [
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (5, 0, 17, 32), 1, (129, 129, 129), True, frames=1),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, frames=1)
+        ]
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
 
@@ -78,7 +84,7 @@ class Play():
                     if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                         self.movingdown = False
                         self.movingup = False
-                    if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    if event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
                         self.movingup = False
                         self.movingdown = False
                 elif event.type == pygame.KEYDOWN:
@@ -111,7 +117,7 @@ class Play():
                         if self.movingdown == False:
                             self.movingup = False
                             self.movingdown = True
-                    if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    if event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
                         self.movingup = True
                         self.movingdown = False
                         self.jumpSound.play()
@@ -131,10 +137,19 @@ class Play():
 
             self.calculate_gravity()
 
-            if self.movingup == False:
+            n = 0
+
+            if self.movingup == False and self.movingleft == False and self.movingright == False:
                 self.screen.blit(self.idleimage, (self.playerx, self.playery))
-            else:
+            if self.movingup == True:
                 self.screen.blit(self.jumpingImage, (self.playerx, self.playery))
+            if self.movingleft == True or self.movingright == True:
+                n += 1
+                if n >= len(self.walkFrames):
+                    n = 0
+                self.walkFrames[n].iter()
+
+                self.screen.blit(self.walkFrames[n].next(), (self.playerx, self.playery))
 
             if self.facingright == True:
                 self.screen.blit(self.armimage, (self.playerx + 10, self.playery + 15))
