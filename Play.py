@@ -42,8 +42,11 @@ class Play():
         self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
 
         self.walkFrames = [
-            SpriteStripAnim('AstronautSpriteAtlas.bmp', (5, 0, 17, 32), 1, (129, 129, 129), True, frames=1),
-            SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, frames=1)
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, frames=10),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (103, 0, 15, 32), 1, (129, 129, 129), True, frames=10),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (71, 0, 15, 32), 1, (129, 129, 129), True, frames=10),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (38, 0, 16, 32), 1, (129, 129, 129), True, frames=10),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (5, 0, 17, 32), 1, (129, 129, 129), True, frames=10)
         ]
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
