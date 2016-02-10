@@ -2,8 +2,6 @@ import sys
 import pygame
 import pyglet
 
-pygame.init()
-
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)

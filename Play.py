@@ -36,17 +36,25 @@ class Play():
         self.changex = 0
         self.changey = 0
 
+        self.FPS = 120
+        self.frames = self.FPS / 12
+
+        self.spritindex = 0
+
         self.idleimage = self.playerspritesheet.image_at((5, 84, 15, 32), colorkey=(129, 129, 129))
         self.gunimage = self.playerspritesheet.image_at((77, 92, 24, 9), colorkey=(129, 129, 129))
         self.armimage = self.playerspritesheet.image_at((57, 98, 12, 5), colorkey=(129, 129, 129))
         self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
 
         self.walkFrames = [
-            SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, frames=10),
-            SpriteStripAnim('AstronautSpriteAtlas.bmp', (103, 0, 15, 32), 1, (129, 129, 129), True, frames=10),
-            SpriteStripAnim('AstronautSpriteAtlas.bmp', (71, 0, 15, 32), 1, (129, 129, 129), True, frames=10),
-            SpriteStripAnim('AstronautSpriteAtlas.bmp', (38, 0, 16, 32), 1, (129, 129, 129), True, frames=10),
-            SpriteStripAnim('AstronautSpriteAtlas.bmp', (5, 0, 17, 32), 1, (129, 129, 129), True, frames=10)
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, self.frames),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (103, 0, 15, 32), 1, (129, 129, 129), True, self.frames),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (71, 0, 15, 32), 1, (129, 129, 129), True, self.frames) +
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (38, 0, 16, 32), 1, (129, 129, 129), True, self.frames),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (5, 0, 17, 32), 1, (129, 129, 129), True, self.frames),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (38, 33, 16, 32), 1, (129, 129, 129), True, self.frames) +
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (69, 33, 17, 32), 1, (129, 129, 129), True, self.frames),
+            SpriteStripAnim('AstronautSpriteAtlas.bmp', (5, 84, 15, 32), 1, (129, 129, 129), True, self.frames)
         ]
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
@@ -73,7 +81,7 @@ class Play():
     def run(self):
         while self.mainLoop:
 
-            self.clock.tick(60)
+            self.clock.tick(self.FPS)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.mainLoop = False
@@ -140,19 +148,20 @@ class Play():
 
             self.calculate_gravity()
 
-            n = 0
+            self.walkFrames[self.spritindex].iter()
 
             if self.movingup == False and self.movingleft == False and self.movingright == False:
                 self.screen.blit(self.idleimage, (self.playerx, self.playery))
-            if self.movingup == True:
+            elif self.movingup == True:
                 self.screen.blit(self.jumpingImage, (self.playerx, self.playery))
-            if self.movingleft == True or self.movingright == True:
-                n += 1
-                if n >= len(self.walkFrames):
-                    n = 0
-                self.walkFrames[n].iter()
+            elif self.movingleft == True or self.movingright == True:
+                self.spritindex += 1
+                print self.spritindex
+                if self.spritindex >= len(self.walkFrames):
+                    self.spritindex = 0
+                self.walkFrames[self.spritindex].iter()
 
-                self.screen.blit(self.walkFrames[n].next(), (self.playerx, self.playery))
+                self.screen.blit(self.walkFrames[self.spritindex].next(), (self.playerx, self.playery))
 
             if self.facingright == True:
                 self.screen.blit(self.armimage, (self.playerx + 10, self.playery + 15))
