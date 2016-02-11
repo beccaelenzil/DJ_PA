@@ -155,6 +155,7 @@ class Play():
             elif self.movingup == True:
                 self.screen.blit(self.jumpingImage, (self.playerx, self.playery))
             elif self.movingleft == True or self.movingright == True:
+                time.sleep(0.04)
                 self.spritindex += 1
                 print self.spritindex
                 if self.spritindex >= len(self.walkFrames):
