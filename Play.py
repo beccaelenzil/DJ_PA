@@ -70,6 +70,7 @@ class Play():
 
         # Check if the player is on the ground
         if self.playery >= 480 - 32 and self.changey >= 0:
+            self.movingup = False
             self.changey = 0
             self.playery = 480 - 32
 
@@ -96,7 +97,6 @@ class Play():
                         self.movingdown = False
                         self.movingup = False
                     if event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
-                        self.movingup = False
                         self.movingdown = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a or event.key == pygame.K_LEFT:
@@ -155,14 +155,16 @@ class Play():
             elif self.movingup == True:
                 self.screen.blit(self.jumpingImage, (self.playerx, self.playery))
             elif self.movingleft == True or self.movingright == True:
-                time.sleep(0.04)
                 self.spritindex += 1
-                print self.spritindex
                 if self.spritindex >= len(self.walkFrames):
                     self.spritindex = 0
                 self.walkFrames[self.spritindex].iter()
 
-                self.screen.blit(self.walkFrames[self.spritindex].next(), (self.playerx, self.playery))
+                if self.facingright == True:
+                    self.screen.blit(self.walkFrames[self.spritindex].next(), (self.playerx, self.playery))
+                else:
+                    walkimage = self.walkFrames[self.spritindex].next()
+                    self.screen.blit(pygame.transform.flip(walkimage, True, False), (self.playerx, self.playery))
 
             if self.facingright == True:
                 self.screen.blit(self.armimage, (self.playerx + 10, self.playery + 15))
