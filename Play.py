@@ -59,6 +59,8 @@ class Play():
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
 
+        self.walkFrames[self.spritindex].iter()
+
         # All the screen stuff
         pygame.display.set_caption("Play State")
 
@@ -66,7 +68,7 @@ class Play():
         if self.changey == 0:
             self.changey = 1
         else:
-            self.changey += .35
+            self.changey += .20
 
         # Check if the player is on the ground
         if self.playery >= 480 - 32 and self.changey >= 0:
@@ -82,7 +84,6 @@ class Play():
     def run(self):
         while self.mainLoop:
 
-            self.clock.tick(self.FPS)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.mainLoop = False
@@ -175,6 +176,8 @@ class Play():
 
             # Update the screen's rendering
             pygame.display.flip()
+
+            self.clock.tick(self.FPS)
 
         #one issue I found was the indentation level of this pygame.quit() - Becca 1/27
         #indenting fixed the quit issue, but introduces other issues
