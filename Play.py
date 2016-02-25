@@ -9,6 +9,10 @@ import pyglet
 from pygame.locals import Color
 from pytmx.util_pygame import load_pygame
 
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+
 class Play():
     def __init__(self, screen):
 
@@ -30,8 +34,8 @@ class Play():
         self.playervelocity = 100
         self.mainLoop = True
 
-        self.playerx = 320
-        self.playery = 240
+        self.playerx = 200
+        self.playery = 100
 
         self.changex = 0
         self.changey = 0
@@ -58,11 +62,12 @@ class Play():
         ]
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
+        pygame.mixer.music.load('STG Theme.ogg')
 
         self.walkFrames[self.spritindex].iter()
 
-        # All the screen stuff
-        pygame.display.set_caption("Play State")
+        self.titlefont = pygame.font.Font("Brandon_reg.otf", 40)
+        self.titlelabel = self.titlefont.render("Welcome to Stellar", 1, WHITE)
 
     def calculate_gravity(self):
         if self.changey == 0:
@@ -148,6 +153,10 @@ class Play():
             self.playery += self.changey
 
             self.calculate_gravity()
+
+            self.screen.blit(self.titlelabel, (170, 100))
+
+            pygame.mixer.music.play(-1)
 
             self.walkFrames[self.spritindex].iter()
 

@@ -49,6 +49,9 @@ class GameMenu():
 
         self.selectSound = pyglet.resource.media('Select.wav', streaming=False)
 
+        self.titlefont = pygame.font.Font("Brandon_reg.otf", 40)
+        self.titlelabel = self.titlefont.render("Stellar", 1, WHITE)
+
         self.funcs = funcs
         self.items = []
         for index, item in enumerate(items):
@@ -148,12 +151,9 @@ class GameMenu():
                     self.set_mouse_selection(item, mpos)
                 self.screen.blit(item.label, item.position)
 
-            self.titlefont = pygame.font.Font("Brandon_reg.otf", 40)
-            self.titlelabel = self.titlefont.render("Stellar", 1, WHITE)
             self.screen.blit(self.titlelabel, (270, 120))
 
             pygame.display.flip()
 
         #one issue I found was the indentation level of this pygame.quit() - Becca 1/27
         #indenting fixed the quit issue, but introduces other issues
-    pygame.quit()

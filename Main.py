@@ -1,9 +1,11 @@
 import sys
 import pygame
 from Menu import GameMenu
+from LevelSelect import LevelSelect
 import Play
 
 pygame.init()
+pygame.mixer.init()
 
 mainLoop = True
 current_state = "MENU"
@@ -38,6 +40,9 @@ while mainLoop:
         gameMenu = GameMenu(screen, funcs.keys(), funcs)
         gameMenu.run()
         current_state = startGame()
+    elif current_state == "LEVELSELECT":
+        levelSelect = LevelSelect(screen)
+        levelSelect.run()
     elif current_state == "PLAY":
         playScreen = Play.Play(screen)
         playScreen.run()
