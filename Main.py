@@ -3,9 +3,13 @@ import pygame
 from Menu import GameMenu
 from LevelSelect import LevelSelect
 import Play
+import pyglet
 
 pygame.init()
 pygame.mixer.init()
+
+theme = pyglet.resource.media('STG Theme.ogg', streaming=False)
+#theme.play()
 
 mainLoop = True
 current_state = "MENU"
@@ -44,6 +48,7 @@ while mainLoop:
         levelSelect = LevelSelect(screen)
         levelSelect.run()
     elif current_state == "PLAY":
+        theme.play()
         playScreen = Play.Play(screen)
         playScreen.run()
 pygame.quit()

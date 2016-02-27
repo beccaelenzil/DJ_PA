@@ -12,6 +12,27 @@ from pytmx.util_pygame import load_pygame
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self):
+        self.bulletsheet = spritesheet.spritesheet("bullets.bmp")
+        self.bulletrightimage = self.bulletsheet.image_at((208, 1, 16, 13), colorkey=WHITE)
+        self.rect = self.bulletsheet.rect
+        self.rect.x = 0
+    def update(self):
+        self.rect.x += 6
+        #print self.rect.x
+        #print "The bullet is being updated."
+
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, width, height):
+        super(Platform, self).__init__()
+
+        self.image = pygame.Surface([width, height])
+        self.image.fill(GREEN)
+
+        self.rect = self.image.get_rect()
 
 class Play():
     def __init__(self, screen):
@@ -23,6 +44,8 @@ class Play():
 
         self.playerspritesheet = spritesheet.spritesheet("AstronautSpriteAtlas.bmp")
 
+        self.platformlist = pygame.sprite.Group()
+
         self.clock = pygame.time.Clock()
 
         self.facingright = True
@@ -33,6 +56,7 @@ class Play():
         self.jumping = False
         self.playervelocity = 100
         self.mainLoop = True
+        self.shooting = False
 
         self.playerx = 200
         self.playery = 100
@@ -50,6 +74,8 @@ class Play():
         self.armimage = self.playerspritesheet.image_at((57, 98, 12, 5), colorkey=(129, 129, 129))
         self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
 
+        self.level = [[210, 30, 100, 300]]
+
         self.walkFrames = [
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, self.frames),
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (103, 0, 15, 32), 1, (129, 129, 129), True, self.frames),
@@ -62,12 +88,9 @@ class Play():
         ]
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
-        pygame.mixer.music.load('STG Theme.ogg')
+        #self.theme = pyglet.resource.media('STG Theme.ogg', streaming=False)
 
         self.walkFrames[self.spritindex].iter()
-
-        self.titlefont = pygame.font.Font("Brandon_reg.otf", 40)
-        self.titlelabel = self.titlefont.render("Welcome to Stellar", 1, WHITE)
 
     def calculate_gravity(self):
         if self.changey == 0:
@@ -76,7 +99,11 @@ class Play():
             self.changey += .20
 
         # Check if the player is on the ground
-        if self.playery >= 480 - 32 and self.changey >= 0:
+        for platform in self.platformlist:
+            print platform.rect.top
+            platformHitList = pygame.sprite.spritecollide(platform, self.platformlist, False)
+
+        if self.playery >= 480 - 32 and self.changey >= 0 and self.playery >= platform.rect.top:
             self.movingup = False
             self.changey = 0
             self.playery = 480 - 32
@@ -85,9 +112,18 @@ class Play():
         if self.playery >= 480:
             self.changey = -10
 
+    def update(self):
+        self.platformlist.update()
+
+    def draw(self, screen):
+        self.platformlist.draw(screen)
+
 
     def run(self):
+
         while self.mainLoop:
+
+            #print "new bullet"
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -134,12 +170,17 @@ class Play():
                         if self.movingdown == False:
                             self.movingup = False
                             self.movingdown = True
-                    if event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_w or event.key == pygame.K_UP:
                         self.movingup = True
                         self.movingdown = False
-                        self.jumpSound.play()
-                    if event.key == pygame.K_SPACE:
                         self.jumping = True
+                        self.jumpSound.play()
+                    if event.key == pygame.K_SPACE or event.type == pygame.MOUSEBUTTONDOWN:
+                        self.shooting = True
+                        bullettospawn = Bullet()
+                        if self.facingright == True:
+                            y_bullet = self.playery
+                            x_bullet = self.playerx
             if self.movingright == True:
                 self.playerx += 5
             elif self.movingleft == True:
@@ -152,11 +193,17 @@ class Play():
             self.screen.fill(self.black)
             self.playery += self.changey
 
+            for platform in self.level:
+                block = Platform(platform[0], platform[1])
+                block.rect.x = platform[2]
+                block.rect.y = platform[3]
+                self.platformlist.add(block)
+
+            self.platformlist.update()
+
             self.calculate_gravity()
 
-            self.screen.blit(self.titlelabel, (170, 100))
-
-            pygame.mixer.music.play(-1)
+            #self.theme.play()
 
             self.walkFrames[self.spritindex].iter()
 
@@ -179,14 +226,25 @@ class Play():
             if self.facingright == True:
                 self.screen.blit(self.armimage, (self.playerx + 10, self.playery + 15))
                 self.screen.blit(self.gunimage, (self.playerx + 13, self.playery + 10))
+                #bullettospawn = Bullet()
+                if self.shooting == True:
+                    #bullettospawn = Bullet(self.playerx,self.playery)
+                    bullettospawn.update()
+                    #self.screen.blit(bullettospawn.bulletrightimage, (self.playerx + 6, self.playery + 6))
+                    self.screen.blit(bullettospawn.bulletrightimage, (x_bullet + bullettospawn.rect.x, y_bullet + 6))
             else:
                 self.screen.blit(self.armimage, (self.playerx - 4, self.playery + 15))
                 self.screen.blit(self.gunimage, (self.playerx - 18, self.playery + 10))
+                if self.shooting == True:
+                    bullettospawn.update()
+                    self.screen.blit(pygame.transform.flip(bullettospawn.bulletrightimage, True, False), (x_bullet + bullettospawn.rect.x, y_bullet + 6))
+
+            self.platformlist.draw(self.screen)
 
             # Update the screen's rendering
-            pygame.display.flip()
-
             self.clock.tick(self.FPS)
+
+            pygame.display.flip()
 
         #one issue I found was the indentation level of this pygame.quit() - Becca 1/27
         #indenting fixed the quit issue, but introduces other issues
