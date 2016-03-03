@@ -238,7 +238,7 @@ class Play():
                 self.screen.blit(self.gunimage, (self.playerx - 18, self.playery + 10))
                 if self.shooting == True:
                     bullettospawn.update()
-                    self.screen.blit(pygame.transform.flip(bullettospawn.bulletrightimage, True, False), (x_bullet + bullettospawn.rect.x, y_bullet + 6))
+                    self.screen.blit(pygame.transform.flip(bullettospawn.bulletrightimage, True, False), (x_bullet - bullettospawn.rect.x, y_bullet + 6))
 
             self.platformlist.draw(self.screen)
 
