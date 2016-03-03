@@ -100,8 +100,7 @@ class Play():
 
         # Check if the player is on the ground
         for platform in self.platformlist:
-            if self.playery == platform.rect.top:
-                print "The player is colliding with a platform"
+            if self.playery >= platform.rect.top and self.playerx >= platform.rect.left and self.playerx <= platform.rect.right and self.changey >= 0:
                 self.movingup = False
                 self.changey = 0
 
