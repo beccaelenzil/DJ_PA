@@ -100,7 +100,10 @@ class Play():
 
         # Check if the player is on the ground
         for platform in self.platformlist:
-            platformHitList = pygame.sprite.spritecollide(platform, self.platformlist, False)
+            if self.playery == platform.rect.top:
+                print "The player is colliding with a platform"
+                self.movingup = False
+                self.changey = 0
 
         if self.playery >= 480 - 32 and self.changey >= 0:
             self.movingup = False
@@ -198,7 +201,7 @@ class Play():
             self.screen.fill(self.black)
             self.playery += self.changey
 
-            #self.platformlist.update()
+            self.platformlist.update()
 
             self.calculate_gravity()
 
@@ -238,7 +241,7 @@ class Play():
                     bullettospawn.update()
                     self.screen.blit(pygame.transform.flip(bullettospawn.bulletrightimage, True, False), (x_bullet + bullettospawn.rect.x, y_bullet + 6))
 
-            #self.platformlist.draw(self.screen)
+            self.platformlist.draw(self.screen)
 
             # Update the screen's rendering
             self.clock.tick(self.FPS)
