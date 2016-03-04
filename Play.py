@@ -29,6 +29,7 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, width, height):
         super(Platform, self).__init__()
 
+        self.width = width
         self.image = pygame.Surface([width, height])
         self.image.fill(GREEN)
 
@@ -74,7 +75,8 @@ class Play():
         self.armimage = self.playerspritesheet.image_at((57, 98, 12, 5), colorkey=(129, 129, 129))
         self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
 
-        self.level = [[210, 30, 100, 300]]
+        self.level = [[210, 30, 100, 300],
+                      [210, 30, 200, 400]]
 
         self.walkFrames = [
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, self.frames),
@@ -99,10 +101,18 @@ class Play():
             self.changey += .20
 
         # Check if the player is on the ground
+
+
         for platform in self.platformlist:
-            if self.playery >= platform.rect.top and self.playerx >= platform.rect.left and self.playerx <= platform.rect.right and self.changey >= 0:
+            print self.playery
+            if (self.playery + 35) <= platform.rect.top \
+                    and platform.rect.top - 3 <= (self.playery + 35) <= platform.rect.top + 3 \
+                    and self.playerx >= platform.rect.left \
+                    and self.playerx <= platform.rect.right and self.changey >= 0:
+                self.playery = platform.rect.top - 35
                 self.movingup = False
-                self.changey = 0
+                if self.movingup == False:
+                    self.changey = 0
 
         if self.playery >= 480 - 32 and self.changey >= 0:
             self.movingup = False
@@ -186,8 +196,9 @@ class Play():
                         self.shooting = True
                         bullettospawn = Bullet()
                         if self.facingright == True:
-                            y_bullet = self.playery
-                            x_bullet = self.playerx
+                            a = 1#do something related to right facing
+                        y_bullet = self.playery
+                        x_bullet = self.playerx
             if self.movingright == True:
                 self.playerx += 5
             elif self.movingleft == True:
@@ -201,6 +212,7 @@ class Play():
             self.playery += self.changey
 
             self.platformlist.update()
+            self.platformlist.draw(self.screen)
 
             self.calculate_gravity()
 
@@ -239,8 +251,6 @@ class Play():
                 if self.shooting == True:
                     bullettospawn.update()
                     self.screen.blit(pygame.transform.flip(bullettospawn.bulletrightimage, True, False), (x_bullet - bullettospawn.rect.x, y_bullet + 6))
-
-            self.platformlist.draw(self.screen)
 
             # Update the screen's rendering
             self.clock.tick(self.FPS)
