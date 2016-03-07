@@ -69,6 +69,7 @@ class Play():
         self.frames = self.FPS / 12
 
         self.spritindex = 0
+        self.crystalindex = 0
 
         self.idleimage = self.playerspritesheet.image_at((5, 84, 15, 32), colorkey=(129, 129, 129))
         self.gunimage = self.playerspritesheet.image_at((77, 92, 24, 9), colorkey=(129, 129, 129))
@@ -76,7 +77,8 @@ class Play():
         self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
 
         self.level = [[210, 30, 100, 300],
-                      [210, 30, 200, 400]]
+                      [210, 30, 200, 400],
+                      [210, 30, 400, 500]]
 
         self.walkFrames = [
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, self.frames),
@@ -87,6 +89,37 @@ class Play():
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (38, 33, 16, 32), 1, (129, 129, 129), True, self.frames) +
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (69, 33, 17, 32), 1, (129, 129, 129), True, self.frames),
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (5, 84, 15, 32), 1, (129, 129, 129), True, self.frames)
+        ]
+
+        self.crystalframes = [
+            SpriteStripAnim('crystal.bmp', (0, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (16, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (31, 0, 16, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (48, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (64, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (79, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (96, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (111, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (127, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (143, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (159, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (176, 0, 16, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (192, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (208, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (223, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (240, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (255, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (271, 0, 16, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (288, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (303, 0, 18, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (319, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (335, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (352, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (368, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (383, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (400, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (415, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (432, 0, 16, 16), 1, WHITE, True, self.frames)
         ]
 
         self.jumpSound = pyglet.resource.media('Jump.wav', streaming=False)
@@ -102,9 +135,7 @@ class Play():
 
         # Check if the player is on the ground
 
-
         for platform in self.platformlist:
-            print self.playery
             if (self.playery + 35) <= platform.rect.top \
                     and platform.rect.top - 3 <= (self.playery + 35) <= platform.rect.top + 3 \
                     and self.playerx >= platform.rect.left \
@@ -211,8 +242,8 @@ class Play():
             self.screen.fill(self.black)
             self.playery += self.changey
 
-            self.platformlist.update()
             self.platformlist.draw(self.screen)
+            self.platformlist.update()
 
             self.calculate_gravity()
 
@@ -235,6 +266,15 @@ class Play():
                 else:
                     walkimage = self.walkFrames[self.spritindex].next()
                     self.screen.blit(pygame.transform.flip(walkimage, True, False), (self.playerx, self.playery))
+
+            self.crystalindex += 1
+            if self.crystalindex >= len(self.crystalframes):
+                self.crystalindex = 0
+            self.crystalframes[self.crystalindex].iter()
+
+            self.screen.blit(self.crystalframes[self.crystalindex].next(), (300, 350))
+            self.screen.blit(self.crystalframes[self.crystalindex].next(), (400, 200))
+            self.screen.blit(self.crystalframes[self.crystalindex].next(), (500, 400))
 
             if self.facingright == True:
                 self.screen.blit(self.armimage, (self.playerx + 10, self.playery + 15))
