@@ -44,6 +44,7 @@ class Play():
         self.black = Color('Black')
 
         self.playerspritesheet = spritesheet.spritesheet("AstronautSpriteAtlas.bmp")
+        self.crystalspritesheet = spritesheet.spritesheet("hud.bmp")
 
         self.platformlist = pygame.sprite.Group()
 
@@ -59,6 +60,10 @@ class Play():
         self.mainLoop = True
         self.shooting = False
 
+        self.collision1 = False
+        self.collosion2 = False
+        self.collision3 = False
+
         self.playerx = 200
         self.playery = 100
 
@@ -68,6 +73,8 @@ class Play():
         self.FPS = 120
         self.frames = self.FPS / 12
 
+        self.score = 0
+
         self.spritindex = 0
         self.crystalindex = 0
 
@@ -76,9 +83,20 @@ class Play():
         self.armimage = self.playerspritesheet.image_at((57, 98, 12, 5), colorkey=(129, 129, 129))
         self.jumpingImage = self.playerspritesheet.image_at((30, 85, 17, 31), colorkey=(129, 129, 129))
 
+        self.crystalimage = self.crystalspritesheet.image_at((80, 0, 16, 16), colorkey=WHITE)
+
+        self.scoreFont = pygame.font.Font("Brandon_reg.otf", 20)
+
         self.level = [[210, 30, 100, 300],
                       [210, 30, 200, 400],
-                      [210, 30, 400, 500]]
+                      [210, 30, 400, 330],
+                      [210, 30, 350, 250]]
+
+        for platform in self.level:
+                block = Platform(platform[0], platform[1])
+                block.rect.x = platform[2]
+                block.rect.y = platform[3]
+                self.platformlist.add(block)
 
         self.walkFrames = [
             SpriteStripAnim('AstronautSpriteAtlas.bmp', (7, 30, 15, 35), 1, (129, 129, 129), True, self.frames),
@@ -97,28 +115,28 @@ class Play():
             SpriteStripAnim('crystal.bmp', (31, 0, 16, 16), 1, WHITE, True, self.frames) +
             SpriteStripAnim('crystal.bmp', (48, 0, 16, 16), 1, WHITE, True, self.frames),
             SpriteStripAnim('crystal.bmp', (64, 0, 16, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (79, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (79, 0, 16, 16), 1, WHITE, True, self.frames) +
             SpriteStripAnim('crystal.bmp', (96, 0, 16, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (111, 0, 17, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (127, 0, 17, 16), 1, WHITE, True, self.frames) +
-            SpriteStripAnim('crystal.bmp', (143, 0, 17, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (159, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (111, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (127, 0, 16, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (143, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (159, 0, 16, 16), 1, WHITE, True, self.frames),
             SpriteStripAnim('crystal.bmp', (176, 0, 16, 16), 1, WHITE, True, self.frames) +
             SpriteStripAnim('crystal.bmp', (192, 0, 16, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (208, 0, 17, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (223, 0, 17, 16), 1, WHITE, True, self.frames) +
-            SpriteStripAnim('crystal.bmp', (240, 0, 17, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (255, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (208, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (223, 0, 16, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (240, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (255, 0, 16, 16), 1, WHITE, True, self.frames),
             SpriteStripAnim('crystal.bmp', (271, 0, 16, 16), 1, WHITE, True, self.frames) +
             SpriteStripAnim('crystal.bmp', (288, 0, 16, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (303, 0, 18, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (319, 0, 17, 16), 1, WHITE, True, self.frames) +
-            SpriteStripAnim('crystal.bmp', (335, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (303, 0, 16, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (319, 0, 16, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (335, 0, 16, 16), 1, WHITE, True, self.frames),
             SpriteStripAnim('crystal.bmp', (352, 0, 16, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (368, 0, 17, 16), 1, WHITE, True, self.frames) +
-            SpriteStripAnim('crystal.bmp', (383, 0, 17, 16), 1, WHITE, True, self.frames),
+            SpriteStripAnim('crystal.bmp', (368, 0, 16, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (383, 0, 16, 16), 1, WHITE, True, self.frames),
             SpriteStripAnim('crystal.bmp', (400, 0, 16, 16), 1, WHITE, True, self.frames),
-            SpriteStripAnim('crystal.bmp', (415, 0, 17, 16), 1, WHITE, True, self.frames) +
+            SpriteStripAnim('crystal.bmp', (415, 0, 16, 16), 1, WHITE, True, self.frames) +
             SpriteStripAnim('crystal.bmp', (432, 0, 16, 16), 1, WHITE, True, self.frames)
         ]
 
@@ -154,20 +172,8 @@ class Play():
         if self.playery >= 480:
             self.changey = -10
 
-    def update(self):
-        self.platformlist.update()
-
-    def draw(self, screen):
-        self.platformlist.draw(screen)
-
 
     def run(self):
-
-        for platform in self.level:
-                block = Platform(platform[0], platform[1])
-                block.rect.x = platform[2]
-                block.rect.y = platform[3]
-                self.platformlist.add(block)
 
         while self.mainLoop:
 
@@ -243,6 +249,8 @@ class Play():
             self.playery += self.changey
 
             self.platformlist.draw(self.screen)
+
+
             self.platformlist.update()
 
             self.calculate_gravity()
@@ -250,6 +258,10 @@ class Play():
             #self.theme.play()
 
             self.walkFrames[self.spritindex].iter()
+
+            self.scoreLabel = self.scoreFont.render("Score: " + str(self.score), 1, WHITE)
+
+            self.screen.blit(self.crystalimage, (250, 40))
 
             if self.movingup == False and self.movingleft == False and self.movingright == False:
                 self.screen.blit(self.idleimage, (self.playerx, self.playery))
@@ -272,9 +284,26 @@ class Play():
                 self.crystalindex = 0
             self.crystalframes[self.crystalindex].iter()
 
-            self.screen.blit(self.crystalframes[self.crystalindex].next(), (300, 350))
-            self.screen.blit(self.crystalframes[self.crystalindex].next(), (400, 200))
-            self.screen.blit(self.crystalframes[self.crystalindex].next(), (500, 400))
+            x1 = 300
+            y1 = 350
+            x2 = 400
+            y2 = 200
+
+            if (self.playerx < x1+8 and self.playerx > x1-8 and self.playery > y1-8 and self.playery < y1+8):
+                self.collision1 = True
+                self.score += 1
+            elif (self.playerx < x2 + 8 and self.playerx > x2 - 8 and self.playery > y2 - 8 and self.playery < y2 + 8):
+                self.collision2 = True
+                self.score += 1
+
+            if self.collision1 == False:
+                self.screen.blit(self.crystalframes[self.crystalindex].next(), (300, 350))
+            if self.collosion2 == False:
+                self.screen.blit(self.crystalframes[self.crystalindex].next(), (400, 200))
+            if self.collision3 == False:
+                self.screen.blit(self.crystalframes[self.crystalindex].next(), (500, 400))
+
+            self.screen.blit(self.scoreLabel, (270, 35))
 
             if self.facingright == True:
                 self.screen.blit(self.armimage, (self.playerx + 10, self.playery + 15))
