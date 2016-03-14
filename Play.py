@@ -288,12 +288,16 @@ class Play():
             y1 = 350
             x2 = 400
             y2 = 200
+            x3 = 500
 
             if (self.playerx < x1+8 and self.playerx > x1-8 and self.playery > y1-8 and self.playery < y1+8):
                 self.collision1 = True
                 self.score += 1
             elif (self.playerx < x2 + 8 and self.playerx > x2 - 8 and self.playery > y2 - 8 and self.playery < y2 + 8):
                 self.collision2 = True
+                self.score += 1
+            elif (self.playerx < x3 + 8 and self.playerx > x3 - 8 and self.playery > x2 - 8 and self.playery < x2 + 8):
+                self.collision3 = True
                 self.score += 1
 
             if self.collision1 == False:
